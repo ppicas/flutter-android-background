@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.stuart.background">
+    package="com.example.background">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name="com.example.background.App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="Flutter Background"
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name="com.stuart.background.MainActivity"
+            android:name="com.example.background.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
@@ -37,12 +37,7 @@
         </activity>
 
         <service
-            android:name="com.stuart.background.BackgroundService"
-            android:enabled="true"
-            android:exported="false" />
-
-        <service
-            android:name="com.stuart.background.FlutterService"
+            android:name="com.example.background.BackgroundService"
             android:enabled="true"
             android:exported="false" />
     </application>

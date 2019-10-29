@@ -1,13 +1,26 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_background/app_retain_widget.dart';
+import 'dart:ui';
 
-void main() => runApp(MyApp());
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_background/app_retain_widget.dart';
+import 'package:flutter_background/background_main.dart';
+import 'package:flutter_background/counter_service.dart';
+
+void main() {
+  runApp(MyApp());
+
+  var channel = const MethodChannel('com.example/background_service');
+  var callbackHandle = PluginUtilities.getCallbackHandle(backgroundMain);
+  channel.invokeMethod('startService', callbackHandle.toRawHandle());
+
+  CounterService().startCounting();
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Background Demo',
       home: AppRetainWidget(
         child: MyHomePage(),
       ),
@@ -27,10 +40,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Demo'),
+        title: Text('Flutter Background Demo'),
       ),
       body: Center(
-        child: Text('Hello world!'),
+        child: ValueListenableBuilder(
+          valueListenable: CounterService().count,
+          builder: (context, count, child) {
+            return Text('Counting: $count');
+          },
+        ),
       ),
     );
   }
