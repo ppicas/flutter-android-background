@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.core.content.ContextCompat
 import io.flutter.plugins.GeneratedPluginRegistrant
 import io.flutter.view.FlutterCallbackInformation
@@ -52,8 +53,7 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
     }
 
     private fun startFlutterNativeView() {
-        println("Starting FlutterNativeView")
-
+        Log.i("BackgroundService", "Starting FlutterNativeView")
         FlutterMain.ensureInitializationComplete(this, null)
 
         getCallbackInformation()?.let { flutterCallbackInformation ->
@@ -72,7 +72,7 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
     }
 
     private fun stopFlutterNativeView() {
-        println("Stopping FlutterNativeView")
+        Log.i("BackgroundService", "Stopping FlutterNativeView")
         flutterNativeView?.destroy()
         flutterNativeView = null
     }
@@ -80,7 +80,6 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
     private fun getCallbackInformation(): FlutterCallbackInformation? {
         val prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         val callbackRawHandle = prefs.getLong(KEY_CALLBACK_RAW_HANDLE, -1)
-        println("callbackRawHandle = $callbackRawHandle")
         return if (callbackRawHandle != -1L) {
             FlutterCallbackInformation.lookupCallbackInformation(callbackRawHandle)
         } else {
