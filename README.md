@@ -17,5 +17,3 @@ These are the techniques used by this project to keep Flutter running:
 - Follow [Get Started](https://flutter.dev/docs/get-started/install) tutorial and install Flutter
 - Start and Android emulator
 - Run the app from terminal with `flutter run`
-
-### Show some :heart: and star the repo to support the project
