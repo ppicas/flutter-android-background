@@ -13,7 +13,7 @@ void main() {
   var callbackHandle = PluginUtilities.getCallbackHandle(backgroundMain);
   channel.invokeMethod('startService', callbackHandle.toRawHandle());
 
-  CounterService().startCounting();
+  CounterService.instance().startCounting();
 }
 
 class MyApp extends StatelessWidget {
@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ValueListenableBuilder(
-          valueListenable: CounterService().count,
+          valueListenable: CounterService.instance().count,
           builder: (context, count, child) {
             return Text('Counting: $count');
           },

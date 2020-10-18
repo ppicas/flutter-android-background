@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'counter.dart';
 
 class CounterService {
-  factory CounterService() => _instance;
+  factory CounterService.instance() => _instance;
 
   CounterService._internal();
 

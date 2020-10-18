@@ -103,7 +103,6 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
             }
             ContextCompat.startForegroundService(context, intent)
         }
-
     }
 
 }

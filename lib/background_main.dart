@@ -5,5 +5,5 @@ import 'counter_service.dart';
 void backgroundMain() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  CounterService().startCounting();
+  CounterService.instance().startCounting();
 }
