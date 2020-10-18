@@ -6,15 +6,14 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
-import io.flutter.plugins.GeneratedPluginRegistrant
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.view.FlutterCallbackInformation
 import io.flutter.view.FlutterMain
-import io.flutter.view.FlutterNativeView
-import io.flutter.view.FlutterRunArguments
 
 class BackgroundService : Service(), LifecycleDetector.Listener {
 
-    private var flutterNativeView: FlutterNativeView? = null
+    private var flutterEngine: FlutterEngine? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -53,38 +52,36 @@ class BackgroundService : Service(), LifecycleDetector.Listener {
     }
 
     private fun startFlutterNativeView() {
-        Log.i("BackgroundService", "Starting FlutterNativeView")
-        FlutterMain.ensureInitializationComplete(this, null)
+        if (flutterEngine != null) return
 
-        getCallbackInformation()?.let { flutterCallbackInformation ->
-            flutterNativeView = FlutterNativeView(this, true).apply {
-                GeneratedPluginRegistrant.registerWith(pluginRegistry)
+        Log.i("BackgroundService", "Starting FlutterEngine")
 
-                val args = FlutterRunArguments().apply {
-                    bundlePath = FlutterMain.findAppBundlePath()
-                    entrypoint = flutterCallbackInformation.callbackName
-                    libraryPath = flutterCallbackInformation.callbackLibraryPath
-                }
+        getCallbackRawHandle()?.let { callbackRawHandle ->
+            flutterEngine = FlutterEngine(this).also { engine ->
+                val callbackInformation =
+                    FlutterCallbackInformation.lookupCallbackInformation(callbackRawHandle)
 
-                runFromBundle(args)
+                engine.dartExecutor.executeDartCallback(
+                    DartExecutor.DartCallback(
+                        assets,
+                        FlutterMain.findAppBundlePath(),
+                        callbackInformation
+                    )
+                )
             }
         }
     }
 
     private fun stopFlutterNativeView() {
-        Log.i("BackgroundService", "Stopping FlutterNativeView")
-        flutterNativeView?.destroy()
-        flutterNativeView = null
+        Log.i("BackgroundService", "Stopping FlutterEngine")
+        flutterEngine?.destroy()
+        flutterEngine = null
     }
 
-    private fun getCallbackInformation(): FlutterCallbackInformation? {
+    private fun getCallbackRawHandle(): Long? {
         val prefs = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         val callbackRawHandle = prefs.getLong(KEY_CALLBACK_RAW_HANDLE, -1)
-        return if (callbackRawHandle != -1L) {
-            FlutterCallbackInformation.lookupCallbackInformation(callbackRawHandle)
-        } else {
-            null
-        }
+        return if (callbackRawHandle != -1L) callbackRawHandle else null
     }
 
     private fun setCallbackRawHandle(handle: Long) {
