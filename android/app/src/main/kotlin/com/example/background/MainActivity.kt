@@ -19,7 +19,10 @@ class MainActivity : FlutterActivity() {
         MethodChannel(binaryMessenger, "com.example/background_service").apply {
             setMethodCallHandler { method, result ->
                 if (method.method == "startService") {
-                    val callbackRawHandle = method.arguments as Long
+                    val callbackRawHandle = if (method.arguments is Long)
+                        method.arguments as Long
+                    else
+                        (method.arguments as Int).toLong() // flutter build apk --obfuscate
                     BackgroundService.startService(this@MainActivity, callbackRawHandle)
                     result.success(null)
                 } else {
